@@ -1,4 +1,5 @@
-import 'package:firstproject/home_page.dart';
+import 'package:firstproject/pages/Login_Page.dart';
+import 'package:firstproject/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main(){
@@ -15,7 +16,14 @@ class Myapp extends StatelessWidget {
     const pi =45.4; //value not changes
 
     return MaterialApp(
-      home: homepage(),
+      //home: homepage(), we can only use one either this or routes slash one
+      themeMode: ThemeMode.light,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark
+      ),
+      routes: {
+        "/":(context)=> LoginPage()
+      },
 
     );
   }
