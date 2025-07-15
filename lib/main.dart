@@ -2,6 +2,7 @@ import 'package:firstproject/pages/Login_Page.dart';
 import 'package:firstproject/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
+
 void main(){
   runApp(Myapp());
 }
@@ -18,6 +19,10 @@ class Myapp extends StatelessWidget {
     return MaterialApp(
       //home: homepage(), we can only use one either this or routes slash one
       themeMode: ThemeMode.light,
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        //primaryTextTheme: GoogleFonts,
+      ),
       darkTheme: ThemeData(
         brightness: Brightness.dark
       ),
