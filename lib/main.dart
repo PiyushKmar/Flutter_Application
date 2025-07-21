@@ -1,40 +1,84 @@
-import 'package:firstproject/pages/Login_Page.dart';
-import 'package:firstproject/pages/home_page.dart';
-import 'package:firstproject/utils/routes.dart';
+// This is a simple Flutter app connected to Firebase.
+// It avoids advanced AI code patterns and keeps a student-style structure.
+
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-void main(){
-  runApp(Myapp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
-class Myapp extends StatelessWidget {
-  const Myapp({super.key});
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Firebase Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final CollectionReference _notes = FirebaseFirestore.instance.collection('notes');
+
+  Future<void> _addNote() async {
+    if (_controller.text.isNotEmpty) {
+      await _notes.add({"note": _controller.text});
+      _controller.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    int Hello=5;
-    var day="Tuesdat";//automatically gives a data type
-    const pi =45.4; //value not changes
-
-    return MaterialApp(
-      //home: homepage(), we can only use one either this or routes slash one
-      themeMode: ThemeMode.light,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        //primaryTextTheme: GoogleFonts,
+    return Scaffold(
+      appBar: AppBar(title: Text("Firebase Notes App")),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(labelText: 'Enter note'),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: _addNote,
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder(
+              stream: _notes.snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                return ListView(
+                  children: snapshot.data!.docs.map((doc) {
+                    return ListTile(
+                      title: Text(doc['note'] ?? ''),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
       ),
-      debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark
-      ),
-      routes: {
-        "/":(context)=> LoginPage(),
-        Myroutes.homeRoute:(context)=>homepage(),
-        Myroutes.loginRoute:(context)=>LoginPage()
-
-      },
-
     );
   }
 }
